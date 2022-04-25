@@ -2,9 +2,8 @@
 
 
 #include "SExplosiveBarrel.h"
-
-#include "PhysXInterfaceWrapperCore.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ASExplosiveBarrel::ASExplosiveBarrel()
@@ -21,6 +20,9 @@ ASExplosiveBarrel::ASExplosiveBarrel()
 
 	// Leaving this on applies small constant force via component 'tick' (Optional)
 	ForceComp->SetAutoActivate(false);
+	
+	// Optional, default constructor of component already adds 4 object types to affect, excluding WorldDynamic
+    ForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 
 	// Optional, Ignore 'Mass' of other objects (if false, the impulse strength will be mush higher to push most objects depending on the Mass)
 	ForceComp->bImpulseVelChange = true;
