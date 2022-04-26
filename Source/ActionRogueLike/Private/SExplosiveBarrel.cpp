@@ -53,7 +53,7 @@ void ASExplosiveBarrel::Tick(float DeltaTime)
 }
 
 void ASExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
-                                   UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+							       UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	ForceComp->FireImpulse();
 }
