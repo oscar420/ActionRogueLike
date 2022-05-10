@@ -41,6 +41,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(EditAnywhere)
+	float Range = 10000000.f;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
