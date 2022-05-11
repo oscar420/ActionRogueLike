@@ -2,9 +2,6 @@
 
 
 #include "SCharacter.h"
-
-#include <NvParamUtils.h>
-
 #include "DrawDebugHelpers.h"
 #include "SInteractionComponent.h"
 #include "Camera/CameraComponent.h"
@@ -99,16 +96,20 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
 	FHitResult Hit;
-	AActor* MyOwner = GetOwner();
+	/*AActor* MyOwner = GetOwner();
+	FVector ActorLocation = MyOwner->GetActorLocation();
+	FRotator ActorRotation = MyOwner->GetActorRotation();*/
 	
 	FVector CameraLocation = CamaraComp->GetComponentLocation();
 	FRotator CameraRotator = CamaraComp->GetComponentRotation();
 	FVector End = CameraLocation + (CameraRotator.Vector() * Range);
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	FCollisionShape Shape;
+	Shape.SetSphere(20.f);
 	
-	bool bSucces = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, ObjectQueryParams);
+	bool bSucces = GetWorld()->SweepSingleByChannel(Hit, CameraLocation, End, FQuat::Identity, ECC_GameTraceChannel1, Shape, QueryParams);
 
 	FRotator CorrectRotation;
 	if (bSucces)
