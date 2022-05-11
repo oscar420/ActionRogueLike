@@ -58,6 +58,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction(TEXT("PrimaryAttack"), IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("PrimaryInteraction"), IE_Pressed, this, &ASCharacter::PrimaryInteraction);
+	PlayerInputComponent->BindAction(TEXT("UltimateAttack"), IE_Pressed, this, &ASCharacter::UltimateAttack);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -135,4 +136,52 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 void ASCharacter::PrimaryInteraction()
 {
 	InteractionComp->PrimaryInteraction();
+}
+
+void ASCharacter::UltimateAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, 0.2f);
+	
+}
+
+void ASCharacter::UltimateAttack_TimeElapsed()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
+	FHitResult Hit;
+	/*AActor* MyOwner = GetOwner();
+	FVector ActorLocation = MyOwner->GetActorLocation();
+	FRotator ActorRotation = MyOwner->GetActorRotation();*/
+	
+	FVector CameraLocation = CamaraComp->GetComponentLocation();
+	FRotator CameraRotator = CamaraComp->GetComponentRotation();
+	FVector End = CameraLocation + (CameraRotator.Vector() * Range);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	FCollisionShape Shape;
+	Shape.SetSphere(20.f);
+	
+	bool bSucces = GetWorld()->SweepSingleByChannel(Hit, CameraLocation, End, FQuat::Identity, ECC_GameTraceChannel1, Shape, QueryParams);
+
+	FRotator CorrectRotation;
+	if (bSucces)
+	{
+		CorrectRotation = (Hit.ImpactPoint - HandLocation).Rotation();	
+	}
+
+	else
+	{
+		CorrectRotation = (End - HandLocation).Rotation();
+	}
+	
+	
+	FTransform SpawnTM = FTransform(CorrectRotation, HandLocation);
+    
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+	//spawning is alwways done through the world
+	GetWorld()->SpawnActor<AActor>(BlackHoleProjectileClass, SpawnTM, SpawnParams);
 }

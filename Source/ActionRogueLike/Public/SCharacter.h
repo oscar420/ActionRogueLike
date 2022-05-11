@@ -21,6 +21,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category="Attack")
+	TSubclassOf<AActor> BlackHoleProjectileClass;
+
 	UPROPERTY(EditAnywhere)
 	USInteractionComponent* InteractionComp;
 
@@ -30,6 +33,8 @@ protected:
 	FTimerHandle TimerHandle_PrimaryAttack;
 
 	void PrimaryAttack_TimeElapsed();
+
+	void UltimateAttack_TimeElapsed();
 
 public:
 	// Sets default values for this character's properties
@@ -55,6 +60,8 @@ protected:
 	void PrimaryAttack();
 
 	void PrimaryInteraction();
+
+	void UltimateAttack();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
