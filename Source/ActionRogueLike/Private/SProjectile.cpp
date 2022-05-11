@@ -4,6 +4,7 @@
 #include "SProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 ASProjectile::ASProjectile()
@@ -15,6 +16,9 @@ ASProjectile::ASProjectile()
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	SphereComp->SetCollisionProfileName(TEXT("Projectile"));
 	RootComponent = SphereComp;
+
+	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("EffectComp"));
+	EffectComp->SetupAttachment(SphereComp);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComp"));
 
