@@ -142,7 +142,7 @@ void ASCharacter::UltimateAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, 0.02f);
 	
 }
 
