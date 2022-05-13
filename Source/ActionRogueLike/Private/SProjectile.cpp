@@ -17,14 +17,19 @@ ASProjectile::ASProjectile()
 	SphereComp->SetCollisionProfileName(TEXT("Projectile"));
 	RootComponent = SphereComp;
 
+	
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("EffectComp"));
 	EffectComp->SetupAttachment(SphereComp);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComp"));
-
+	MovementComp->InitialSpeed = 6000.0f;
+	MovementComp->bRotationFollowsVelocity = true;
+	MovementComp->bInitialVelocityInLocalSpace = true;
+	MovementComp->ProjectileGravityScale = 0.0f;
 }
 
 // Called when the game starts or when spawned
+
 void ASProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -32,9 +37,20 @@ void ASProjectile::BeginPlay()
 }
 
 // Called every frame
+
 void ASProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ASProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                              FVector NormalImpulse, const FHitResult& Hit)
+{
+	Explode();
+}
+
+void ASProjectile::Explode_Implementation()
+{
 }
 

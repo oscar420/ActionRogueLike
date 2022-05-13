@@ -10,6 +10,8 @@ class UCameraComponent;
 class USpringArmComponent;
 class USInteractionComponent;
 class UAnimMontage;
+class UParticleSystem;
+class ASTeleportProjectile;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -24,6 +26,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> BlackHoleProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category="Attack")
+	TSubclassOf<AActor> TeleportProjectileClass;
+	
 	UPROPERTY(EditAnywhere)
 	USInteractionComponent* InteractionComp;
 
@@ -35,6 +40,8 @@ protected:
 	void PrimaryAttack_TimeElapsed();
 
 	void UltimateAttack_TimeElapsed();
+
+	void TeleportAttack_TimeElapsed();
 
 public:
 	// Sets default values for this character's properties
@@ -62,6 +69,9 @@ protected:
 	void PrimaryInteraction();
 
 	void UltimateAttack();
+
+	void TeleportAttack();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

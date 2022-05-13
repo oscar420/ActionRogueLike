@@ -4,9 +4,11 @@
 #include "SCharacter.h"
 #include "DrawDebugHelpers.h"
 #include "SInteractionComponent.h"
+#include "STeleportProjectile.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -59,6 +61,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("PrimaryInteraction"), IE_Pressed, this, &ASCharacter::PrimaryInteraction);
 	PlayerInputComponent->BindAction(TEXT("UltimateAttack"), IE_Pressed, this, &ASCharacter::UltimateAttack);
+	PlayerInputComponent->BindAction(TEXT("Teleport"), IE_Pressed, this, &ASCharacter::TeleportAttack);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -184,4 +187,49 @@ void ASCharacter::UltimateAttack_TimeElapsed()
 	SpawnParams.Instigator = this;
 	//spawning is alwways done through the world
 	GetWorld()->SpawnActor<AActor>(BlackHoleProjectileClass, SpawnTM, SpawnParams);
+}
+
+void ASCharacter::TeleportAttack()
+{
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::TeleportAttack_TimeElapsed, 0.02f);
+}
+
+void ASCharacter::TeleportAttack_TimeElapsed()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
+	FHitResult Hit;
+	/*AActor* MyOwner = GetOwner();
+	FVector ActorLocation = MyOwner->GetActorLocation();
+	FRotator ActorRotation = MyOwner->GetActorRotation();*/
+	
+	FVector CameraLocation = CamaraComp->GetComponentLocation();
+	FRotator CameraRotator = CamaraComp->GetComponentRotation();
+	FVector End = CameraLocation + (CameraRotator.Vector() * Range);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	FCollisionShape Shape;
+	Shape.SetSphere(20.f);
+	
+	bool bSucces = GetWorld()->SweepSingleByChannel(Hit, CameraLocation, End, FQuat::Identity, ECC_GameTraceChannel1, Shape, QueryParams);
+
+	FRotator CorrectRotation;
+	if (bSucces)
+	{
+		CorrectRotation = (Hit.ImpactPoint - HandLocation).Rotation();	
+	}
+
+	else
+	{
+		CorrectRotation = (End - HandLocation).Rotation();
+	}
+	
+	
+	FTransform SpawnTM = FTransform(CorrectRotation, HandLocation);
+    
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+	//spawning is always done through the world
+	GetWorld()->SpawnActor<AActor>(TeleportProjectileClass, SpawnTM, SpawnParams);
 }
