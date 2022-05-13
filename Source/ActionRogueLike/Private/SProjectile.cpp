@@ -4,6 +4,7 @@
 #include "SProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
@@ -52,5 +53,18 @@ void ASProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 
 void ASProjectile::Explode_Implementation()
 {
+	//Check to make sure we aren't already being destroyed
+	//adding ensure to see if we encounter this situation at all
+	if (ensure(!IsPendingKill()))
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		
+		Destroy();
+	}
+}
+
+void ASProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SProjectile.h"
-#include "GameFramework/Actor.h"
 #include "STeleportProjectile.generated.h"
 
 UCLASS()
@@ -17,6 +16,20 @@ public:
 	ASTeleportProjectile();
 
 protected:
+
+	UPROPERTY(EditAnywhere, Category="Teleport")
+	float TeleportDelayed;
+
+	UPROPERTY(EditAnywhere, Category="Teleport")
+	float DelayedDetonate;
+
+	//Handle to cancel timer if we already hit something
+	FTimerHandle TimerHandle_DelayedDetonate;
+
+	virtual void Explode_Implementation() override;
+
+	void TeleportInstigator();
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

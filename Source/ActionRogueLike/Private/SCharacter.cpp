@@ -4,7 +4,6 @@
 #include "SCharacter.h"
 #include "DrawDebugHelpers.h"
 #include "SInteractionComponent.h"
-#include "STeleportProjectile.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -98,42 +97,7 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
-	FHitResult Hit;
-	/*AActor* MyOwner = GetOwner();
-	FVector ActorLocation = MyOwner->GetActorLocation();
-	FRotator ActorRotation = MyOwner->GetActorRotation();*/
-	
-	FVector CameraLocation = CamaraComp->GetComponentLocation();
-	FRotator CameraRotator = CamaraComp->GetComponentRotation();
-	FVector End = CameraLocation + (CameraRotator.Vector() * Range);
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	FCollisionShape Shape;
-	Shape.SetSphere(20.f);
-	
-	bool bSucces = GetWorld()->SweepSingleByChannel(Hit, CameraLocation, End, FQuat::Identity, ECC_GameTraceChannel1, Shape, QueryParams);
-
-	FRotator CorrectRotation;
-	if (bSucces)
-	{
-		CorrectRotation = (Hit.ImpactPoint - HandLocation).Rotation();	
-	}
-
-	else
-	{
-		CorrectRotation = (End - HandLocation).Rotation();
-	}
-	
-	
-	FTransform SpawnTM = FTransform(CorrectRotation, HandLocation);
-    
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-	//spawning is alwways done through the world
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	SpawnProjectile(ProjectileClass);
 }
 
 void ASCharacter::PrimaryInteraction()
@@ -151,51 +115,22 @@ void ASCharacter::UltimateAttack()
 
 void ASCharacter::UltimateAttack_TimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
-	FHitResult Hit;
-	/*AActor* MyOwner = GetOwner();
-	FVector ActorLocation = MyOwner->GetActorLocation();
-	FRotator ActorRotation = MyOwner->GetActorRotation();*/
-	
-	FVector CameraLocation = CamaraComp->GetComponentLocation();
-	FRotator CameraRotator = CamaraComp->GetComponentRotation();
-	FVector End = CameraLocation + (CameraRotator.Vector() * Range);
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	FCollisionShape Shape;
-	Shape.SetSphere(20.f);
-	
-	bool bSucces = GetWorld()->SweepSingleByChannel(Hit, CameraLocation, End, FQuat::Identity, ECC_GameTraceChannel1, Shape, QueryParams);
-
-	FRotator CorrectRotation;
-	if (bSucces)
-	{
-		CorrectRotation = (Hit.ImpactPoint - HandLocation).Rotation();	
-	}
-
-	else
-	{
-		CorrectRotation = (End - HandLocation).Rotation();
-	}
-	
-	
-	FTransform SpawnTM = FTransform(CorrectRotation, HandLocation);
-    
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-	//spawning is alwways done through the world
-	GetWorld()->SpawnActor<AActor>(BlackHoleProjectileClass, SpawnTM, SpawnParams);
+	SpawnProjectile(BlackHoleProjectileClass);
 }
 
 void ASCharacter::TeleportAttack()
 {
+	PlayAnimMontage(AttackAnim);
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::TeleportAttack_TimeElapsed, 0.02f);
 }
 
 void ASCharacter::TeleportAttack_TimeElapsed()
 {
+	SpawnProjectile(TeleportProjectileClass);
+}
+
+void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
 	FHitResult Hit;
 	/*AActor* MyOwner = GetOwner();
@@ -214,15 +149,13 @@ void ASCharacter::TeleportAttack_TimeElapsed()
 	bool bSucces = GetWorld()->SweepSingleByChannel(Hit, CameraLocation, End, FQuat::Identity, ECC_GameTraceChannel1, Shape, QueryParams);
 
 	FRotator CorrectRotation;
+	
 	if (bSucces)
 	{
-		CorrectRotation = (Hit.ImpactPoint - HandLocation).Rotation();	
+		End = Hit.ImpactPoint;
 	}
-
-	else
-	{
-		CorrectRotation = (End - HandLocation).Rotation();
-	}
+	
+	CorrectRotation = FRotationMatrix::MakeFromX(End - HandLocation).Rotator();
 	
 	
 	FTransform SpawnTM = FTransform(CorrectRotation, HandLocation);
@@ -231,5 +164,5 @@ void ASCharacter::TeleportAttack_TimeElapsed()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
 	//spawning is always done through the world
-	GetWorld()->SpawnActor<AActor>(TeleportProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(SpawnProjectileClass, SpawnTM, SpawnParams);
 }

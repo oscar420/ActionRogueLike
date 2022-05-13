@@ -72,6 +72,8 @@ protected:
 
 	void TeleportAttack();
 
+	void SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

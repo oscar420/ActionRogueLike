@@ -38,6 +38,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();
+
+	virtual void PostInitializeComponents() override;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
