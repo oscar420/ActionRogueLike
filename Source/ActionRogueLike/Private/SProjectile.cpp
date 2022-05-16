@@ -15,7 +15,6 @@ ASProjectile::ASProjectile()
 
 	
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	SphereComp->SetCollisionProfileName(TEXT("Projectile"));
 	RootComponent = SphereComp;
 
 	

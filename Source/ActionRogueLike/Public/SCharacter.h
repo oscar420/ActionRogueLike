@@ -12,6 +12,7 @@ class USInteractionComponent;
 class UAnimMontage;
 class UParticleSystem;
 class ASTeleportProjectile;
+class USAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -48,6 +49,10 @@ public:
 	ASCharacter();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	USAttributeComponent* AttributeComp;
+	
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CamaraComp;
 	
