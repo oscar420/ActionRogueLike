@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "SPowerUpBase.generated.h"
 
+class UStaticMeshComponent;
+class USphereComponent;
+
 UCLASS()
 class ACTIONROGUELIKE_API ASPowerUpBase : public AActor
 {
@@ -16,6 +19,13 @@ public:
 	ASPowerUpBase();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* SphereComp; 
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

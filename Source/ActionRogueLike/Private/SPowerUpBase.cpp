@@ -2,12 +2,19 @@
 
 
 #include "SPowerUpBase.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 ASPowerUpBase::ASPowerUpBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	RootComponent = SphereComp;
+
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp->SetupAttachment(SphereComp);
 
 }
 
