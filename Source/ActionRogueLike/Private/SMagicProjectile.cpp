@@ -5,7 +5,9 @@
 
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -15,6 +17,9 @@ ASMagicProjectile::ASMagicProjectile()
 
 	SphereComp->SetCollisionProfileName(TEXT("Projectile"));
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+
+	FlightLoopAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
+	FlightLoopAudio->SetupAttachment(SphereComp);
 }
 
 // Called when the game starts or when spawned
@@ -42,7 +47,9 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		
 		if (AttributeComp)
 		{
-			AttributeComp->ApplyHealthChange(-20.f);
+			AttributeComp->ApplyHealthChange(DamageAmount);
+			UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), GetActorRotation());
 			
 			Destroy();
 		}

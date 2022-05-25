@@ -17,10 +17,10 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category="Teleport")
+	UPROPERTY(EditDefaultsOnly, Category="Teleport")
 	float TeleportDelayed;
 
-	UPROPERTY(EditAnywhere, Category="Teleport")
+	UPROPERTY(EditDefaultsOnly, Category="Teleport")
 	float DelayedDetonate;
 
 	//Handle to cancel timer if we already hit something

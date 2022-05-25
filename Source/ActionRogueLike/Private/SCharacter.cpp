@@ -34,13 +34,23 @@ ASCharacter::ASCharacter()
 }
 
 // Called when the game starts or when spawned
+
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributeComp->OnHealthChange.AddDynamic(this, &ASCharacter::OnHealthChange);
+}
+
 // Called every frame
+
+
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -48,6 +58,7 @@ void ASCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
+
 
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -112,7 +123,7 @@ void ASCharacter::UltimateAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, 0.02f);
+	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, 0.02f);
 	
 }
 
@@ -124,7 +135,7 @@ void ASCharacter::UltimateAttack_TimeElapsed()
 void ASCharacter::TeleportAttack()
 {
 	PlayAnimMontage(AttackAnim);
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::TeleportAttack_TimeElapsed, 0.02f);
+	GetWorldTimerManager().SetTimer(TimerHandle_teleportAttack, this, &ASCharacter::TeleportAttack_TimeElapsed, 0.02f);
 }
 
 void ASCharacter::TeleportAttack_TimeElapsed()
@@ -134,38 +145,59 @@ void ASCharacter::TeleportAttack_TimeElapsed()
 
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
-	FHitResult Hit;
-	/*AActor* MyOwner = GetOwner();
-	FVector ActorLocation = MyOwner->GetActorLocation();
-	FRotator ActorRotation = MyOwner->GetActorRotation();*/
-	
-	FVector CameraLocation = CamaraComp->GetComponentLocation();
-	FRotator CameraRotator = CamaraComp->GetComponentRotation();
-	FVector End = CameraLocation + (CameraRotator.Vector() * Range);
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	FCollisionShape Shape;
-	Shape.SetSphere(20.f);
-	
-	bool bSucces = GetWorld()->SweepSingleByChannel(Hit, CameraLocation, End, FQuat::Identity, ECC_GameTraceChannel1, Shape, QueryParams);
-
-	FRotator CorrectRotation;
-	
-	if (bSucces)
+	if (ensureAlways(SpawnProjectileClass))
 	{
-		End = Hit.ImpactPoint;
+		FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
+		FHitResult Hit;
+		/*AActor* MyOwner = GetOwner();
+		FVector ActorLocation = MyOwner->GetActorLocation();
+		FRotator ActorRotation = MyOwner->GetActorRotation();*/
+	
+		FVector TraceStart = CamaraComp->GetComponentLocation();
+		FRotator CameraRotator = CamaraComp->GetComponentRotation();
+		FVector TraceEnd = TraceStart + (GetControlRotation().Vector() * Range);
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+
+		FCollisionObjectQueryParams ObjParams;
+		ObjParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
+		ObjParams.AddObjectTypesToQuery(ECC_PhysicsBody);
+
+		FCollisionShape Shape;
+		Shape.SetSphere(20.f);
+	
+		bool bSucces = GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjParams, Shape, QueryParams);
+	
+		if (bSucces)
+		{
+			TraceEnd = Hit.ImpactPoint;
+		}
+	
+		FRotator CorrectRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
+	
+		FTransform SpawnTM = FTransform(CorrectRotation, HandLocation);
+    
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
+		//spawning is always done through the world
+		GetWorld()->SpawnActor<AActor>(SpawnProjectileClass, SpawnTM, SpawnParams);	
 	}
 	
-	CorrectRotation = FRotationMatrix::MakeFromX(End - HandLocation).Rotator();
+}
+
+void ASCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+{
 	
+	USkeletalMeshComponent* MeshComp =GetMesh();
+	MeshComp->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());
+	MeshComp->SetScalarParameterValueOnMaterials("Flashtime", FlashTime);
 	
-	FTransform SpawnTM = FTransform(CorrectRotation, HandLocation);
-    
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-	//spawning is always done through the world
-	GetWorld()->SpawnActor<AActor>(SpawnProjectileClass, SpawnTM, SpawnParams);
+	if (NewHealth <= 0.0f && Delta < 0.f)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
+	}
 }

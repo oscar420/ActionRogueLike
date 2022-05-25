@@ -37,7 +37,11 @@ protected:
 	UAnimMontage* AttackAnim;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_BlackHoleAttack;
+	FTimerHandle TimerHandle_teleportAttack;
 
+	virtual void PostInitializeComponents() override;
+	
 	void PrimaryAttack_TimeElapsed();
 
 	void UltimateAttack_TimeElapsed();
@@ -49,9 +53,15 @@ public:
 	ASCharacter();
 
 protected:
+	
+	UFUNCTION()
+	void OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USAttributeComponent* AttributeComp;
+
+	UPROPERTY(EditAnywhere)
+	float FlashTime = 4.f;
 	
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CamaraComp;

@@ -10,6 +10,8 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
+class UAudioComponent;
+class USoundBase;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectile
@@ -22,6 +24,12 @@ public:
 	ASMagicProjectile();
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly, Category="Sound")
+	UAudioComponent* FlightLoopAudio;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Attack")
+	float DamageAmount = -20.f;
 	
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
