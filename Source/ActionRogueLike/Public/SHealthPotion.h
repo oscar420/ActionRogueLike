@@ -4,21 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "SPowerUpBase.h"
-#include "GameFramework/Actor.h"
 #include "SHealthPotion.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API ASHealthPotion : public ASPowerUpBase
+class ACTIONROGUELIKE_API ASHealthPotion : public ASPowerUpBase, public IGameplayInterface
 {
 	GENERATED_BODY()
+
+	void Interact_Implementation(APawn* InstigatorPawn);
 	
 public:	
 	// Sets default values for this actor's properties
 	ASHealthPotion();
 
 protected:
+
+	void ActivatePotion();
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	FTimerHandle TimerHandle_SpawnDelay;
 
 public:	
 	// Called every frame

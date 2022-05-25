@@ -4,6 +4,13 @@
 #include "SPowerUpBase.h"
 #include "Components/SphereComponent.h"
 
+/*
+void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
+{
+	IGameplayInterface::Interact_Implementation(InstigatorPawn);
+}
+*/
+
 // Sets default values
 ASPowerUpBase::ASPowerUpBase()
 {
@@ -19,6 +26,7 @@ ASPowerUpBase::ASPowerUpBase()
 }
 
 // Called when the game starts or when spawned
+
 void ASPowerUpBase::BeginPlay()
 {
 	Super::BeginPlay();
