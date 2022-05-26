@@ -2,10 +2,8 @@
 
 
 #include "SHealthPotion.h"
-
-#include "PhysXInterfaceWrapperCore.h"
 #include "SAttributeComponent.h"
-#include "Components/SphereComponent.h"
+
 
 // Sets default values
 
@@ -43,10 +41,7 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		if (AttributeComp && AttributeComp->Health != AttributeComp->MaxHealth)
 		{
 			AttributeComp->ApplyHealthChange(50.f);
-			SetActorHiddenInGame(true);
-			SetActorEnableCollision(false);
-			SetActorTickEnabled(false);
-
+			PotionStatus(true);
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle_SpawnDelay, this, &ASHealthPotion::ActivatePotion, 10.f);
 		}
 	}
@@ -57,8 +52,14 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 
 void ASHealthPotion::ActivatePotion()
 {
-	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
-	SetActorTickEnabled(true);
+	PotionStatus(false);
 }
+
+void ASHealthPotion::PotionStatus(bool bIsHidden)
+{
+	SetActorHiddenInGame(bIsHidden);
+	SetActorEnableCollision(!bIsHidden);
+	SetActorTickEnabled(!bIsHidden);
+}
+
 

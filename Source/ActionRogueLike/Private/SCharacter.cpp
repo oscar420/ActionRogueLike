@@ -33,14 +33,6 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationYaw = false;
 }
 
-// Called when the game starts or when spawned
-
-void ASCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 void ASCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -48,9 +40,14 @@ void ASCharacter::PostInitializeComponents()
 	AttributeComp->OnHealthChange.AddDynamic(this, &ASCharacter::OnHealthChange);
 }
 
+// Called when the game starts or when spawned
+void ASCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
 // Called every frame
-
-
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -58,8 +55,6 @@ void ASCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-
-
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -183,7 +178,8 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnParams.Instigator = this;
 		//spawning is always done through the world
-		GetWorld()->SpawnActor<AActor>(SpawnProjectileClass, SpawnTM, SpawnParams);	
+		GetWorld()->SpawnActor<AActor>(SpawnProjectileClass, SpawnTM, SpawnParams);
+		UGameplayStatics::SpawnEmitterAttached(ShootEffect, GetMesh(), TEXT("Muzzle_01"), FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
 	}
 	
 }

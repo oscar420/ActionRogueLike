@@ -28,6 +28,9 @@ ASProjectile::ASProjectile()
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 	MovementComp->ProjectileGravityScale = 0.0f;
+
+	ImpactShakeInnerRadius = 0.0f;
+	ImpactShakeOuterRadius = 1500.0f;
 }
 
 // Called when the game starts or when spawned
@@ -58,11 +61,17 @@ void ASProjectile::Explode_Implementation()
 	//adding ensure to see if we encounter this situation at all
 	if (ensure(!IsPendingKill()))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), GetActorRotation());
+		ActivateEffects();
 		
 		Destroy();
 	}
+}
+
+void ASProjectile::ActivateEffects()
+{
+	UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), GetActorRotation());
+	UGameplayStatics::PlayWorldCameraShake(this, ImpactShake, GetActorLocation(), ImpactShakeInnerRadius, ImpactShakeOuterRadius);
 }
 
 void ASProjectile::PostInitializeComponents()

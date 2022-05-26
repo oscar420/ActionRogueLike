@@ -18,8 +18,10 @@ public:
 	ASHealthPotion();
 
 protected:
-
+	
 	void ActivatePotion();
+
+	void PotionStatus(bool IsActive);
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

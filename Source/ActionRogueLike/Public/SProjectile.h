@@ -10,6 +10,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 class USoundBase;
+class UCameraShakeBase;
 
 UCLASS(Abstract) // 'Abstract' marks this class as incomplete, keeping this out of certain dropdowns windows like SpawnActor in Unreal Editor
 class ACTIONROGUELIKE_API ASProjectile : public AActor
@@ -22,7 +23,16 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category="Audio")
+	UPROPERTY(EditDefaultsOnly, Category="Effects|Shake")
+	TSubclassOf<UCameraShakeBase> ImpactShake;
+
+	UPROPERTY(EditDefaultsOnly, Category="Effects|Shake")
+	float ImpactShakeInnerRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category="Effects|Shake")
+	float ImpactShakeOuterRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category="Effects")
 	USoundBase* ImpactSound;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Component")
@@ -42,6 +52,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();
+
+	void ActivateEffects();
 
 	virtual void PostInitializeComponents() override;
 	
