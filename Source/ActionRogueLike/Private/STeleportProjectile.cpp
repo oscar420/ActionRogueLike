@@ -26,7 +26,7 @@ void ASTeleportProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	//SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_DelayedDetonate, this, &ASTeleportProjectile::Explode, DelayedDetonate);
 }

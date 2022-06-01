@@ -17,7 +17,7 @@ ASProjectile::ASProjectile()
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	SphereComp->SetCollisionProfileName(TEXT("Projectile"));
 	RootComponent = SphereComp;
-	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	
  
 	
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("EffectComp"));
@@ -41,8 +41,15 @@ void ASProjectile::BeginPlay()
 	
 }
 
-// Called every frame
+void ASProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectile::OnActorHit);
+}
+
+// Called every frame
 void ASProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -73,11 +80,3 @@ void ASProjectile::ActivateEffects()
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), GetActorRotation());
 	UGameplayStatics::PlayWorldCameraShake(this, ImpactShake, GetActorLocation(), ImpactShakeInnerRadius, ImpactShakeOuterRadius);
 }
-
-void ASProjectile::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectile::OnActorHit);
-}
-

@@ -168,6 +168,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 		if (bSucces)
 		{
 			TraceEnd = Hit.ImpactPoint;
+			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 20.f, 32, FColor::Green, false, 2.0f);
 		}
 	
 		FRotator CorrectRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
