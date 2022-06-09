@@ -31,6 +31,11 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	
 	bUseControllerRotationYaw = false;
+
+	AttackAnimDelay = 0.2f;
+	FlashTimeParamName = TEXT("Flashtime");
+	TimeToHitParamName = TEXT("TimeToHit");
+	HandSocketName = TEXT("Muzzle_01");
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -97,9 +102,9 @@ void ASCharacter::MoveRight(float Value)
 
 void ASCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
+	StartAttackEffects();
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackAnimDelay);
 
 	//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
 }
@@ -118,7 +123,7 @@ void ASCharacter::UltimateAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, 0.02f);
+	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, AttackAnimDelay);
 	
 }
 
@@ -129,8 +134,8 @@ void ASCharacter::UltimateAttack_TimeElapsed()
 
 void ASCharacter::TeleportAttack()
 {
-	PlayAnimMontage(AttackAnim);
-	GetWorldTimerManager().SetTimer(TimerHandle_teleportAttack, this, &ASCharacter::TeleportAttack_TimeElapsed, 0.02f);
+	StartAttackEffects();
+	GetWorldTimerManager().SetTimer(TimerHandle_teleportAttack, this, &ASCharacter::TeleportAttack_TimeElapsed, AttackAnimDelay);
 }
 
 void ASCharacter::TeleportAttack_TimeElapsed()
@@ -138,11 +143,17 @@ void ASCharacter::TeleportAttack_TimeElapsed()
 	SpawnProjectile(TeleportProjectileClass);
 }
 
+void ASCharacter::StartAttackEffects()
+{
+	PlayAnimMontage(AttackAnim);
+	UGameplayStatics::SpawnEmitterAttached(ShootEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
+}
+
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 {
 	if (ensureAlways(SpawnProjectileClass))
 	{
-		FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
+		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 		FHitResult Hit;
 		/*AActor* MyOwner = GetOwner();
 		FVector ActorLocation = MyOwner->GetActorLocation();
@@ -180,7 +191,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 		SpawnParams.Instigator = this;
 		//spawning is always done through the world
 		GetWorld()->SpawnActor<AActor>(SpawnProjectileClass, SpawnTM, SpawnParams);
-		UGameplayStatics::SpawnEmitterAttached(ShootEffect, GetMesh(), TEXT("Muzzle_01"), FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
+		//UGameplayStatics::SpawnEmitterAttached(ShootEffect, GetMesh(), TEXT("Muzzle_01"), FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
 	}
 	
 }
@@ -189,8 +200,8 @@ void ASCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent* 
 {
 	
 	USkeletalMeshComponent* MeshComp =GetMesh();
-	MeshComp->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());
-	MeshComp->SetScalarParameterValueOnMaterials("Flashtime", FlashTime);
+	MeshComp->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->GetTimeSeconds());
+	MeshComp->SetScalarParameterValueOnMaterials(FlashTimeParamName, FlashTime);
 	
 	if (NewHealth <= 0.0f && Delta < 0.f)
 	{

@@ -7,29 +7,22 @@
 #include "SHealthPotion.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API ASHealthPotion : public ASPowerUpBase, public IGameplayInterface
+class ACTIONROGUELIKE_API ASHealthPotion : public ASPowerUpBase//, public IGameplayInterface
 {
 	GENERATED_BODY()
-
-	void Interact_Implementation(APawn* InstigatorPawn);
 	
 public:	
 	// Sets default values for this actor's properties
 	ASHealthPotion();
 
+	void Interact_Implementation(APawn* InstigatorPawn) override;
+
 protected:
+
+	UPROPERTY(EditAnywhere, Category="PowerUp")
+	float HealthRecoveryValue = 50.f;
 	
-	void ActivatePotion();
-
-	void PotionStatus(bool IsActive);
+	UPROPERTY(VisibleAnywhere, Category="Components")
+	UStaticMeshComponent* MeshComp;
 	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	FTimerHandle TimerHandle_SpawnDelay;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 };

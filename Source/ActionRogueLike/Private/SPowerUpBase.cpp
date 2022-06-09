@@ -4,39 +4,37 @@
 #include "SPowerUpBase.h"
 #include "Components/SphereComponent.h"
 
-/*
-void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
-{
-	IGameplayInterface::Interact_Implementation(InstigatorPawn);
-}
-*/
-
 // Sets default values
 ASPowerUpBase::ASPowerUpBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	RootComponent = SphereComp;
 
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetupAttachment(SphereComp);
-
+	RespawnTime = 10.f;
 }
 
-// Called when the game starts or when spawned
-
-void ASPowerUpBase::BeginPlay()
+void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
 {
-	Super::BeginPlay();
-	
+	// logic in derived classes
 }
 
-// Called every frame
-void ASPowerUpBase::Tick(float DeltaTime)
+void ASPowerUpBase::ShowPowerUp()
 {
-	Super::Tick(DeltaTime);
+	SetPowerUpState(true);
+}
 
+void ASPowerUpBase::HideAndCooldownPowerUp()
+{
+	SetPowerUpState(false);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_SpawnDelay, this, &ASPowerUpBase::ShowPowerUp, RespawnTime);
+}
+
+void ASPowerUpBase::SetPowerUpState(bool bNewIsActive)
+{
+	SetActorEnableCollision(bNewIsActive);
+
+	// Set visibility on root and all children
+	RootComponent->SetVisibility(bNewIsActive, true);
 }
 

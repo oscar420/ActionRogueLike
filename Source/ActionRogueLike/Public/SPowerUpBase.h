@@ -11,11 +11,11 @@ class UStaticMeshComponent;
 class USphereComponent;
 
 UCLASS()
-class ACTIONROGUELIKE_API ASPowerUpBase : public AActor //public IGameplayInterface
+class ACTIONROGUELIKE_API ASPowerUpBase : public AActor, public IGameplayInterface
 {
 	GENERATED_BODY()
 
-	//void Interact_Implementation(APawn* InstigatorPawn);
+	
 	
 public:	
 	// Sets default values for this actor's properties
@@ -23,17 +23,23 @@ public:
 
 protected:
 
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* MeshComp;
+	UPROPERTY(EditAnywhere, Category="PowerUp")
+	float RespawnTime;
 
+	FTimerHandle TimerHandle_SpawnDelay;
+	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComp; 
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	void ShowPowerUp();
+
+	void HideAndCooldownPowerUp();
+
+	void SetPowerUpState(bool bNewIsActive);
+
+public:
+	
+	void Interact_Implementation(APawn* InstigatorPawn) override;
 
 };

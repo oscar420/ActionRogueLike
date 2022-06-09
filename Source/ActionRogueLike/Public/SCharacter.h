@@ -21,6 +21,18 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly, Category="Attack")
+	float AttackAnimDelay;
+
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName HandSocketName;
+
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName FlashTimeParamName;
+	
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName TimeToHitParamName;
+
 	UPROPERTY(EditDefaultsOnly, Category="Effects")
 	UParticleSystem* ShootEffect;
 
@@ -56,6 +68,8 @@ public:
 	ASCharacter();
 
 protected:
+
+	void StartAttackEffects();
 	
 	UFUNCTION()
 	void OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);

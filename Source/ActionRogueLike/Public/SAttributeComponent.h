@@ -17,16 +17,18 @@ public:
 	// Sets default values for this component's properties
 	USAttributeComponent();
 
+	
+
+protected:
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attribute")
 	float Health;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attribute")
 	float MaxHealth;
 
-
-protected:
-
 	
+
 	
 public:
 
@@ -39,5 +41,11 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Attribute")
 	bool ApplyHealthChange(float Delta);
+
+	UFUNCTION(BlueprintCallable, Category="Attribute")
+	bool IsFullHealth();
+
+	UFUNCTION(BlueprintCallable, Category="Attribute")
+	float GetMaxHealth();
 	
 };
