@@ -10,6 +10,7 @@
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 
+
 /**
  * 
  */
@@ -25,7 +26,7 @@ public:
 	virtual void StartPlay() override;
 
 protected:
-
+	
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	TSubclassOf<AActor> MinionClass;
 
@@ -34,10 +35,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	float SpawnTimerInterval;
+
+	UPROPERTY(EditDefaultsOnly, Category="AI")
+	UCurveFloat* DifficultyCurve;
 	
 	FTimerHandle TimerHandle_SpawnBots;
 
+	UFUNCTION()
 	void SpawnBotTimerElapsed();
 
+	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 };

@@ -3,6 +3,9 @@
 
 #include "SGameModeBase.h"
 
+#include "EngineUtils.h"
+#include "SAttributeComponent.h"
+#include "AI/SAiCharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
 ASGameModeBase::ASGameModeBase()
@@ -37,7 +40,31 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Spawn bot EQS Query Failed!"));
 		return;
-	}	
+	}
+
+	int32 NrOfAliveBots = 0;
+	for (TActorIterator<ASAiCharacter> It(GetWorld()); It; ++It)
+	{
+		ASAiCharacter* Bot = *It;
+
+		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
+		if (AttributeComp && AttributeComp->IsAlive())
+		{
+			NrOfAliveBots++;
+		}
+	}
+
+	float MaxBotCount = 10.f;;
+
+	if (DifficultyCurve)
+	{
+		MaxBotCount = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
+	}
+	
+	if (NrOfAliveBots >= MaxBotCount)
+	{
+		return;
+	}
 	
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
 
