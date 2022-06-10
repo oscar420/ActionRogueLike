@@ -25,6 +25,11 @@ float USAttributeComponent::GetMaxHealth()
 	return MaxHealth;
 }
 
+float USAttributeComponent::GetHealth()
+{
+	return Health;
+}
+
 bool USAttributeComponent::ApplyHealthChange(float Delta)
 {
 	float OldHealth = Health;
