@@ -27,7 +27,7 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
 	if (AttributeComp && !AttributeComp->IsFullHealth())
 	{
-		if(AttributeComp->ApplyHealthChange(HealthRecoveryValue))
+		if(AttributeComp->ApplyHealthChange(this, HealthRecoveryValue))
 		{
 			HideAndCooldownPowerUp();	
 		}

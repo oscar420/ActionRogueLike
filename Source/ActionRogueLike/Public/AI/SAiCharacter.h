@@ -29,9 +29,10 @@ protected:
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 
+	void SetTargetActor(AActor* NewTarget);
+
 	void PostInitializeComponents() override;
-
 	
-
-
+	UFUNCTION()
+	void OnHealthChange(AActor* InstigatorActor, class USAttributeComponent* OwningComp, float NewHealth, float Delta);
 };

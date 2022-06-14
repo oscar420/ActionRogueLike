@@ -14,7 +14,14 @@ class ACTIONROGUELIKE_API USBTService_CheckLowHealth : public UBTService
 {
 	GENERATED_BODY()
 
+public:
+
+	USBTService_CheckLowHealth();
+
 protected:
+
+	UPROPERTY(EditDefaultsOnly, Category="AI")
+	float LowHealthFraction;
 	
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 

@@ -40,7 +40,7 @@ public:
 	
 	
 	UFUNCTION(BlueprintCallable, Category="Attribute")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category="Attribute")
 	bool IsFullHealth();

@@ -4,6 +4,7 @@
 #include "AI/SAiCharacter.h"
 
 #include "AIController.h"
+#include "BrainComponent.h"
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -25,19 +26,52 @@ void ASAiCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &ASAiCharacter::OnPawnSeen);
+	AttributeComp->OnHealthChange.AddDynamic(this, &ASAiCharacter::OnHealthChange);
+}
+
+void ASAiCharacter::OnPawnSeen(APawn* Pawn)
+{
+	SetTargetActor(Pawn);
+
+	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
 }
 
 
-void ASAiCharacter::OnPawnSeen(APawn* Pawn)
+
+void ASAiCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
+                                   float Delta)
+{
+	if (InstigatorActor != this)
+	{
+		SetTargetActor(InstigatorActor);
+	}
+	
+	if (Delta < 0.0f)
+	{
+		if (NewHealth <= 0.0f)
+		{
+			// stop bt
+			AAIController* AIC = Cast<AAIController>(GetController());
+			if (AIC)
+			{
+				AIC->GetBrainComponent()->StopLogic(TEXT("Killed"));
+			}
+			
+			//ragdol
+			GetMesh()->SetAllBodiesSimulatePhysics(true);
+			GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+			
+			//lifespan
+			SetLifeSpan(10.f);			
+		}
+	}
+}
+
+void ASAiCharacter::SetTargetActor(AActor* NewTarget)
 {
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
-		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
-		BBComp->SetValueAsObject("TargetActor", Pawn);
-
-		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+		AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NewTarget);
 	}
 }
-
-

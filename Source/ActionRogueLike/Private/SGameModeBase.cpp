@@ -3,6 +3,7 @@
 
 #include "SGameModeBase.h"
 
+#include "DrawDebugHelpers.h"
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
 #include "AI/SAiCharacter.h"
@@ -25,6 +26,33 @@ void ASGameModeBase::StartPlay()
 
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
+	int32 NrOfAliveBots = 0;
+	// Returns every Actor or class of type <> in the world
+	for (TActorIterator<ASAiCharacter> It(GetWorld()); It; ++It)
+	{
+		ASAiCharacter* Bot = *It;
+
+		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
+		if (ensure(AttributeComp && AttributeComp->IsAlive()))
+		{
+			NrOfAliveBots++;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Found %i alive bots."), NrOfAliveBots);
+
+	float MaxBotCount = 10.f;;
+	if (DifficultyCurve)
+	{
+		MaxBotCount = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
+	}
+	
+	if (NrOfAliveBots >= MaxBotCount)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("At Maximum capacity. Ski[[ing bot spawn"));
+		return;
+	}
+	
 	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(this, SpawnBotQuery, this, EEnvQueryRunMode::RandomBest5Pct, nullptr);
 
 	if (ensure(QueryInstance))
@@ -41,35 +69,13 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 		UE_LOG(LogTemp, Warning, TEXT("Spawn bot EQS Query Failed!"));
 		return;
 	}
-
-	int32 NrOfAliveBots = 0;
-	for (TActorIterator<ASAiCharacter> It(GetWorld()); It; ++It)
-	{
-		ASAiCharacter* Bot = *It;
-
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if (AttributeComp && AttributeComp->IsAlive())
-		{
-			NrOfAliveBots++;
-		}
-	}
-
-	float MaxBotCount = 10.f;;
-
-	if (DifficultyCurve)
-	{
-		MaxBotCount = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
-	}
-	
-	if (NrOfAliveBots >= MaxBotCount)
-	{
-		return;
-	}
 	
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
-
 	if (Locations.IsValidIndex(0))
 	{
-		//GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+
+		//track all used spawn locations
+		DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
 	}
 }
