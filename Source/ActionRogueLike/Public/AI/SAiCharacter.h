@@ -20,6 +20,15 @@ public:
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly, Category="Effects")
+	float FlashTime;
+	
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName TimeToHitParamName;
+
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName FlashTimeParamName;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USAttributeComponent* AttributeComp;
 

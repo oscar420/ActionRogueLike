@@ -18,6 +18,11 @@ ASAiCharacter::ASAiCharacter()
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>(TEXT("Attributecomp"));
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	FlashTime = 4.f;
+
+	TimeToHitParamName = TEXT("TimeTohit");
+	FlashTimeParamName = TEXT("FlashTime");
 }
 
 
@@ -48,6 +53,10 @@ void ASAiCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent
 	
 	if (Delta < 0.0f)
 	{
+
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->GetTimeSeconds());
+		GetMesh()->SetScalarParameterValueOnMaterials(FlashTimeParamName, FlashTime);
+		
 		if (NewHealth <= 0.0f)
 		{
 			// stop bt
