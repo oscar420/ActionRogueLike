@@ -10,6 +10,7 @@
 #include "SWorldUserWidgetLit.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CapsuleComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -20,6 +21,9 @@ ASAiCharacter::ASAiCharacter()
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>(TEXT("Attributecomp"));
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
 	FlashTime = 4.f;
 
