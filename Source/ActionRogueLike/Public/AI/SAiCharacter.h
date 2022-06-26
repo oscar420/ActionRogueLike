@@ -8,6 +8,7 @@
 
 class UPawnSensingComponent;
 class USAttributeComponent;
+class USWorldUserWidgetLit;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASAiCharacter : public ACharacter
@@ -19,6 +20,12 @@ public:
 	ASAiCharacter();
 
 protected:
+
+	UPROPERTY()
+	USWorldUserWidgetLit* ActiveHealthBar;
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<USWorldUserWidgetLit> HealthBarWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category="Effects")
 	float FlashTime;

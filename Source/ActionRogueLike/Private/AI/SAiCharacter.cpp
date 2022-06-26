@@ -7,7 +7,9 @@
 #include "BrainComponent.h"
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
+#include "SWorldUserWidgetLit.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -50,6 +52,18 @@ void ASAiCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent
 	{
 		SetTargetActor(InstigatorActor);
 	}
+
+	if (ActiveHealthBar == nullptr)
+	{
+		ActiveHealthBar = CreateWidget<USWorldUserWidgetLit>(GetWorld(), HealthBarWidgetClass);
+		if (ActiveHealthBar)
+		{
+			ActiveHealthBar->AttachedActor = this;
+			ActiveHealthBar->AddToViewport();
+		}
+		
+	}
+	
 	
 	if (Delta < 0.0f)
 	{

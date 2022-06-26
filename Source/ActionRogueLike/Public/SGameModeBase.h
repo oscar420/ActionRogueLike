@@ -25,7 +25,15 @@ public:
 	
 	virtual void StartPlay() override;
 
+	UFUNCTION(Exec)
+	void KillAll();
+
+	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
+
 protected:
+	
+	UFUNCTION()
+	void RespawnPlayerElpased(AController* Controller);
 	
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	TSubclassOf<AActor> MinionClass;
