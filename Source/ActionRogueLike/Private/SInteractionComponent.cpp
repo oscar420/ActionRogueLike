@@ -49,8 +49,8 @@ void USInteractionComponent::PrimaryInteraction()
 
 	FVector EyeLocation;
 	FRotator EyeRotation;
-	
 	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+
 	FVector End = EyeLocation + (EyeRotation.Vector() * Range);
 
 	float Radius = 20.0f;

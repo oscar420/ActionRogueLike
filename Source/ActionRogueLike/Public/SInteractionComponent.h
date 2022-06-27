@@ -21,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-	float Range = 200.f;
+	float Range = 375.f;
 
 public:	
 	// Called every frame

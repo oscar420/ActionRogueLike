@@ -63,6 +63,8 @@ protected:
 
 	void TeleportAttack_TimeElapsed();
 
+	virtual FVector GetPawnViewLocation() const override;
+
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
