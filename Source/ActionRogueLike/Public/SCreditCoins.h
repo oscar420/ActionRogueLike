@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SPowerUpBase.h"
 #include "GameFramework/Actor.h"
 #include "SCreditCoins.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API ASCreditCoins : public AActor
+class ACTIONROGUELIKE_API ASCreditCoins : public ASPowerUpBase
 {
 	GENERATED_BODY()
 	
