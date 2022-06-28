@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SPowerUpBase.h"
-#include "GameFramework/Actor.h"
 #include "SCreditCoins.generated.h"
 
 UCLASS()
@@ -16,12 +15,17 @@ public:
 	// Sets default values for this actor's properties
 	ASCreditCoins();
 
+	void Interact_Implementation(APawn* InstigatorPawn) override;
+
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	UStaticMeshComponent* MeshComp;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	int32 CreditValue;
 
+	
+
+	
 };

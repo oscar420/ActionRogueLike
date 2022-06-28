@@ -2,26 +2,32 @@
 
 
 #include "SCreditCoins.h"
+#include "SPlayerState.h"
 
 // Sets default values
 ASCreditCoins::ASCreditCoins()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	CreditValue = 20;
 }
 
-// Called when the game starts or when spawned
-void ASCreditCoins::BeginPlay()
+void ASCreditCoins::Interact_Implementation(APawn* InstigatorPawn)
 {
-	Super::BeginPlay();
-	
+	if (!ensure(InstigatorPawn))
+	{
+		return;
+	}
+
+	if (ASPlayerState* PS = InstigatorPawn->GetPlayerState<ASPlayerState>())
+	{
+		if (ensure(PS))
+		{
+			PS->AddCredit(CreditValue);
+			HideAndCooldownPowerUp();
+		}
+	}
 }
 
-// Called every frame
-void ASCreditCoins::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
