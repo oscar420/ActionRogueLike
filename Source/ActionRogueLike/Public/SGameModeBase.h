@@ -31,15 +31,18 @@ public:
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
 protected:
-	
-	UFUNCTION()
-	void RespawnPlayerElpased(AController* Controller);
+
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	int32 CreditsPerKill;
 	
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	TSubclassOf<AActor> MinionClass;
 
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	UEnvQuery* SpawnBotQuery;
+
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	UEnvQuery* SpawnCreditsQuery;
 
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	float SpawnTimerInterval;
@@ -48,6 +51,9 @@ protected:
 	UCurveFloat* DifficultyCurve;
 	
 	FTimerHandle TimerHandle_SpawnBots;
+	
+	UFUNCTION()
+	void RespawnPlayerElpased(AController* Controller);
 
 	UFUNCTION()
 	void SpawnBotTimerElapsed();

@@ -19,6 +19,9 @@ public:
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	int32 CreditCost;
+
 	UPROPERTY(EditAnywhere, Category="PowerUp")
 	float HealthRecoveryValue = 50.f;
 	

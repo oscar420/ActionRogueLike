@@ -7,6 +7,7 @@
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SPlayerState.h"
 #include "AI/SAiCharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
@@ -15,6 +16,10 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT
 ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimerInterval = 2.f;
+
+	CreditsPerKill = 20;
+	
+	PlayerStateClass = ASPlayerState::StaticClass();
 }
 
 void ASGameModeBase::StartPlay()
@@ -126,6 +131,16 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 
 		float RespawnDelay = 2.f;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);	
+	}
+
+	APawn* KillerPlayer = Cast<APawn>(Killer);
+	if (KillerPlayer && KillerPlayer != VictimActor)
+	{
+		ASPlayerState* PS = Cast<ASPlayerState>(KillerPlayer->GetPlayerState());
+		if (PS)
+		{
+			PS->AddCredit(CreditsPerKill);
+		}
 	}
 	
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
