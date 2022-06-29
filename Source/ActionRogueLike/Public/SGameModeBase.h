@@ -9,6 +9,7 @@
 
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
+class ASPowerUpBase;
 
 
 /**
@@ -33,6 +34,15 @@ public:
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	TArray<TSubclassOf<AActor>> PowerUpClasess;
+
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	float MinimumDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	int32 DesireSpawnNumber;
+
+	UPROPERTY(EditDefaultsOnly, Category="Credit")
 	int32 CreditsPerKill;
 	
 	UPROPERTY(EditDefaultsOnly, Category="AI")
@@ -42,7 +52,7 @@ protected:
 	UEnvQuery* SpawnBotQuery;
 
 	UPROPERTY(EditDefaultsOnly, Category="Credit")
-	UEnvQuery* SpawnCreditsQuery;
+	UEnvQuery* SpawnPowerUpsQuery;
 
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	float SpawnTimerInterval;
@@ -56,8 +66,14 @@ protected:
 	void RespawnPlayerElpased(AController* Controller);
 
 	UFUNCTION()
+	void SpawnPowerUps();
+
+	UFUNCTION()
 	void SpawnBotTimerElapsed();
 
 	UFUNCTION()
-	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+	void OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION()
+	void OnSpawnPowerUpsQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 };

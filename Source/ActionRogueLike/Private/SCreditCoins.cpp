@@ -9,6 +9,7 @@ ASCreditCoins::ASCreditCoins()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeshComp->SetupAttachment(RootComponent);
 
 	CreditValue = 20;
 }

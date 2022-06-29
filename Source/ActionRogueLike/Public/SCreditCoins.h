@@ -22,7 +22,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Credit")
 	UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	UPROPERTY(VisibleAnywhere, Category="Credit")
 	int32 CreditValue;
 
 	
