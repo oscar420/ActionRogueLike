@@ -13,6 +13,7 @@ class UAnimMontage;
 class UParticleSystem;
 class ASTeleportProjectile;
 class USAttributeComponent;
+class USActionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -79,6 +80,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USAttributeComponent* AttributeComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Actions")
+	USActionComponent* ActionComp;
+
 	UPROPERTY(EditAnywhere)
 	float FlashTime = 4.f;
 	
@@ -97,6 +101,10 @@ protected:
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);
+
+	void SprintStart();
+
+	void sprintStop();
 
 	void PrimaryAttack();
 

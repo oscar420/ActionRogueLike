@@ -9,9 +9,21 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class ACTIONROGUELIKE_API USAction : public UObject
 {
 	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, Category="Actions")
+	
+	FName ActionName;
+
+	UFUNCTION(BlueprintNativeEvent, Category="Actions")
+	void StartAction(AActor* Instigator);
+
+	UFUNCTION(BlueprintNativeEvent, Category="Actions")
+	void StopAction(AActor* Instigator);
 	
 };
