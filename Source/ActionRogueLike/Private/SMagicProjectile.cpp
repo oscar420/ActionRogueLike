@@ -3,11 +3,13 @@
 
 #include "SMagicProjectile.h"
 
-#include "SAttributeComponent.h"
+#include "SActionComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "SActionEffect.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -22,27 +24,33 @@ ASMagicProjectile::ASMagicProjectile()
 	FlightLoopAudio->SetupAttachment(SphereComp);
 }
 
-// Called when the game starts or when spawned
-
-void ASMagicProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-
-void ASMagicProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*if (OtherActor && OtherActor != GetInstigator())
+	if (OtherActor && OtherActor != GetInstigator())
 	{
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		// static FGameplayTag Tag = FGameplayTag::RequestGameplayTag("Status.Parrying");
+		UE_LOG(LogTemp, Warning, TEXT("Parrying"));
+		USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
+		if (ActionComp && ActionComp->ActiveGamePlayTags.HasTag(ParryTag))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Parrying"));
+			MovementComp->Velocity = -MovementComp->Velocity;
+
+			SetInstigator(Cast<APawn>(OtherActor));
+			return;
+		}
+		
+		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
+		{
+			Explode();
+
+			if (ActionComp)
+			{
+				ActionComp->AddAction(GetInstigator(), ActionEffectClass);
+			}
+		}
+		/*USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		
 		if (AttributeComp)
 		{
@@ -50,13 +58,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			ActivateEffects();
 			
 			Destroy();
-		}
-		
-	}*/
+		}*/
+	}
 
-	if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
+	/*if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
 	{
 		Explode();
-	}
+	}*/
 }
 

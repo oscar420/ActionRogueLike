@@ -26,7 +26,7 @@ void ASCreditCoins::Interact_Implementation(APawn* InstigatorPawn)
 		if (ensure(PS))
 		{
 			PS->AddCredit(CreditValue);
-			HideAndCooldownPowerUp();
+			SetPowerUpState(false);
 		}
 	}
 }

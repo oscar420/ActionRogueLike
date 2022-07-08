@@ -214,7 +214,7 @@ void ASGameModeBase::OnSpawnPowerUpsQueryCompleted(UEnvQueryInstanceBlueprintWra
 			UsedLocations.Add(PickUpLocation);
 			
 			int32 RandomPowwerUpClassIndex = FMath::RandRange(0, PowerUpClasess.Num()-1);
-			GetWorld()->SpawnActor<AActor>(PowerUpClasess[RandomPowwerUpClassIndex], PickUpLocation, FRotator::ZeroRotator);
+			GetWorld()->SpawnActor<AActor>(PowerUpClasess[RandomPowwerUpClassIndex], PickUpLocation + FVector (0.0f,0.0f,70.f), FRotator::ZeroRotator);
 		
 		}
 	}

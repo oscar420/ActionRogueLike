@@ -22,6 +22,9 @@ protected:
 	int32 Credits;
 
 public:
+
+	UFUNCTION(BlueprintCallable, Category="Credit")
+	int32 GetCredits() const;
 	
 	UFUNCTION(BlueprintCallable, Category="Credit")
 	void AddCredit(int32 Delta);

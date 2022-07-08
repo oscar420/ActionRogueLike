@@ -46,6 +46,7 @@ void ASProjectile::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	UE_LOG(LogTemp, Warning, TEXT("Intigator: %s"), *GetNameSafe(GetInstigator()));
 	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectile::OnActorHit);
 }
 

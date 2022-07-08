@@ -3,7 +3,6 @@
 
 #include "SPlayerState.h"
 
-#include "SAttributeComponent.h"
 
 void ASPlayerState::AddCredit(int32 Delta)
 {
@@ -13,7 +12,9 @@ void ASPlayerState::AddCredit(int32 Delta)
 	}
 
 	Credits += Delta;
+	
 	OnCreditChange.Broadcast(this, Credits, Delta);
+	
 	UE_LOG(LogTemp, Warning, TEXT("Credits: %i"), Credits);
 }
 
@@ -31,6 +32,13 @@ bool ASPlayerState::RemoveCredit(int32 Delta)
 	}
 
 	Credits -= Delta;
+	
 	OnCreditChange.Broadcast(this, Credits, -Delta);
+	
 	return  true;
+}
+
+int32 ASPlayerState::GetCredits() const
+{
+	return  Credits;
 }

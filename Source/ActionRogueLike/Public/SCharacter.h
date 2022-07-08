@@ -22,11 +22,13 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category="Attack")
-	float AttackAnimDelay;
+	/*UPROPERTY(EditDefaultsOnly, Category="Attack")
+	float AttackAnimDelay;*/
 
+	/*
 	UPROPERTY(VisibleAnywhere, Category="Effects")
 	FName HandSocketName;
+	*/
 
 	UPROPERTY(VisibleAnywhere, Category="Effects")
 	FName FlashTimeParamName;
@@ -34,35 +36,35 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Effects")
 	FName TimeToHitParamName;
 
-	UPROPERTY(EditDefaultsOnly, Category="Effects")
-	UParticleSystem* ShootEffect;
+	/*UPROPERTY(EditDefaultsOnly, Category="Effects")
+	UParticleSystem* ShootEffect;*/
 
-	UPROPERTY(EditAnywhere, Category="Attack")
+	/*UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> BlackHoleProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category="Attack")
-	TSubclassOf<AActor> TeleportProjectileClass;
+	TSubclassOf<AActor> TeleportProjectileClass;*/
 	
 	UPROPERTY(EditAnywhere)
 	USInteractionComponent* InteractionComp;
 
-	UPROPERTY(EditAnywhere, Category="Attack")
-	UAnimMontage* AttackAnim;
+	/*UPROPERTY(EditAnywhere, Category="Attack")
+	UAnimMontage* AttackAnim;*/
 	
-	FTimerHandle TimerHandle_PrimaryAttack;
+	/*FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_BlackHoleAttack;
-	FTimerHandle TimerHandle_teleportAttack;
+	FTimerHandle TimerHandle_teleportAttack;*/
 
 	virtual void PostInitializeComponents() override;
 	
-	void PrimaryAttack_TimeElapsed();
+	/*void PrimaryAttack_TimeElapsed();
 
 	void UltimateAttack_TimeElapsed();
 
-	void TeleportAttack_TimeElapsed();
+	void TeleportAttack_TimeElapsed();*/
 
 	virtual FVector GetPawnViewLocation() const override;
 
@@ -72,7 +74,7 @@ public:
 
 protected:
 
-	void StartAttackEffects();
+	//void StartAttackEffects();
 	
 	UFUNCTION()
 	void OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
@@ -114,7 +116,7 @@ protected:
 
 	void TeleportAttack();
 
-	void SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass);
+	/*void SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass);*/
 
 public:	
 	// Called every frame

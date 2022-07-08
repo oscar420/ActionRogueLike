@@ -9,6 +9,7 @@
 class UPawnSensingComponent;
 class USAttributeComponent;
 class USWorldUserWidgetLit;
+class USActionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASAiCharacter : public ACharacter
@@ -20,6 +21,9 @@ public:
 	ASAiCharacter();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, Category="Actions")
+	USActionComponent* ActionComp;
 
 	UPROPERTY()
 	USWorldUserWidgetLit* ActiveHealthBar;

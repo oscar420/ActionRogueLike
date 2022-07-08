@@ -35,10 +35,10 @@ ASCharacter::ASCharacter()
 	
 	bUseControllerRotationYaw = false;
 
-	AttackAnimDelay = 0.2f;
+	//AttackAnimDelay = 0.2f;
 	FlashTimeParamName = TEXT("Flashtime");
 	TimeToHitParamName = TEXT("TimeToHit");
-	HandSocketName = TEXT("Muzzle_01");
+	//HandSocketName = TEXT("Muzzle_01");
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -117,17 +117,20 @@ void ASCharacter::sprintStop()
 
 void ASCharacter::PrimaryAttack()
 {
-	StartAttackEffects();
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackAnimDelay);
+	ActionComp->StartActionByName(this, "PrimaryAttack");
+	
+	/*StartAttackEffects();
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackAnimDelay);*/
 
 	//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
 }
 
-void ASCharacter::PrimaryAttack_TimeElapsed()
+/*void ASCharacter::PrimaryAttack_TimeElapsed()
 {
 	SpawnProjectile(ProjectileClass);
-}
+}*/
 
 void ASCharacter::PrimaryInteraction()
 {
@@ -136,27 +139,24 @@ void ASCharacter::PrimaryInteraction()
 
 void ASCharacter::UltimateAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::UltimateAttack_TimeElapsed, AttackAnimDelay);
+	ActionComp->StartActionByName(this, "BlackHole");
 	
 }
 
-void ASCharacter::UltimateAttack_TimeElapsed()
+/*void ASCharacter::UltimateAttack_TimeElapsed()
 {
 	SpawnProjectile(BlackHoleProjectileClass);
-}
+}*/
 
 void ASCharacter::TeleportAttack()
 {
-	StartAttackEffects();
-	GetWorldTimerManager().SetTimer(TimerHandle_teleportAttack, this, &ASCharacter::TeleportAttack_TimeElapsed, AttackAnimDelay);
+	ActionComp->StartActionByName(this, "Dash");
 }
 
-void ASCharacter::TeleportAttack_TimeElapsed()
+/*void ASCharacter::TeleportAttack_TimeElapsed()
 {
 	SpawnProjectile(TeleportProjectileClass);
-}
+}*/
 
 // overrides teh value use in GetActorEyesViewPoint function on SInteractionComponent class and sue the camara location instead of the actoreyes viewpoint
 FVector ASCharacter::GetPawnViewLocation() const
@@ -164,13 +164,13 @@ FVector ASCharacter::GetPawnViewLocation() const
 	return CamaraComp->GetComponentLocation();
 }
 
-void ASCharacter::StartAttackEffects()
+/*void ASCharacter::StartAttackEffects()
 {
 	PlayAnimMontage(AttackAnim);
 	UGameplayStatics::SpawnEmitterAttached(ShootEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
-}
+}*/
 
-void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
+/*void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 {
 	if (ensureAlways(SpawnProjectileClass))
 	{
@@ -178,7 +178,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 		FHitResult Hit;
 		/*AActor* MyOwner = GetOwner();
 		FVector ActorLocation = MyOwner->GetActorLocation();
-		FRotator ActorRotation = MyOwner->GetActorRotation();*/
+		FRotator ActorRotation = MyOwner->GetActorRotation();#1#
 	
 		FVector TraceStart = CamaraComp->GetComponentLocation();
 		FRotator CameraRotator = CamaraComp->GetComponentRotation();
@@ -215,7 +215,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnProjectileClass)
 		//UGameplayStatics::SpawnEmitterAttached(ShootEffect, GetMesh(), TEXT("Muzzle_01"), FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
 	}
 	
-}
+}*/
 
 void ASCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
 {
