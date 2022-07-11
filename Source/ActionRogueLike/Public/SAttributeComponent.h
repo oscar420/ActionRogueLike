@@ -6,7 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "SAttributeComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChange, AActor*, InstigatorActor, class USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChange, AActor*, InstigatorActor, class USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnRageChange, AActor*, InstigatorActor, class USAttributeComponent*, OwningComp, float, NewRage, float, Delta);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnAttributechange, AActor*, InstigatorActor, class USAttributeComponent*, OwningComp, float, NewValue, float, Delta);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
@@ -28,7 +31,13 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute")
+	float Rage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attribute")
+	float MaxRage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attribute")
 	float Health;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attribute")
@@ -46,11 +55,16 @@ public:
 	bool IsAlive() const;
 	
 	UPROPERTY(BlueprintAssignable)
-	FOnHealthChange OnHealthChange;
-	
+	FOnAttributechange OnHealthChange;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributechange OnRageChange;
 	
 	UFUNCTION(BlueprintCallable, Category="Attribute")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
+
+	UFUNCTION(BlueprintCallable, Category="Attribute")
+	bool ApplyRage(AActor* InstigatorActor, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category="Attribute")
 	bool IsFullHealth();
@@ -59,5 +73,13 @@ public:
 	float GetMaxHealth();
 
 	UFUNCTION(BlueprintCallable, Category="Attribute")
+	float GetMaxRage();
+
+	UFUNCTION(BlueprintCallable, Category="Attribute")
 	float GetHealth();
+
+	UFUNCTION(BlueprintCallable, Category="Attribute")
+	float GetRage() const;
 };
+
+

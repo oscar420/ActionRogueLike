@@ -9,8 +9,10 @@ static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplie
 // Sets default values for this component's properties
 USAttributeComponent::USAttributeComponent()
 {
+	MaxRage = 100.f;
 	MaxHealth = 100.f;
 	Health = MaxHealth;
+	Rage = 0.f;
 }
 
 bool USAttributeComponent::Kill(AActor* InstigatorActor)
@@ -31,6 +33,11 @@ bool USAttributeComponent::IsFullHealth()
 float USAttributeComponent::GetMaxHealth()
 {
 	return MaxHealth;
+}
+
+float USAttributeComponent::GetMaxRage()
+{
+	return MaxRage;
 }
 
 float USAttributeComponent::GetHealth()
@@ -54,6 +61,8 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	
 	float OldHealth = Health;
 	
+	
+	
 	Health = FMath::Clamp(Health + Delta, 0.f, MaxHealth);
 
 	float ActualDelta = Health - OldHealth;
@@ -69,6 +78,21 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	}
 	
 	return  ActualDelta != 0;
+}
+
+bool USAttributeComponent::ApplyRage(AActor* InstigatorActor, float Delta)
+{
+	float OldRage = Rage;
+	
+	Rage = FMath::Clamp(Rage + Delta, 0.0f, MaxRage);
+
+	float ActualDelta = Rage - OldRage;
+	if (ActualDelta != 0.f)
+	{
+		OnRageChange.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+	}
+
+	return ActualDelta != 0.f;
 }
 
 USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
@@ -90,4 +114,9 @@ bool USAttributeComponent::IsActorAlive(AActor* Actor)
 	}
 
 	return false;
+}
+
+float USAttributeComponent::GetRage() const
+{
+	return Rage;
 }

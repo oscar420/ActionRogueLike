@@ -46,9 +46,25 @@ void ASAiCharacter::PostInitializeComponents()
 
 void ASAiCharacter::OnPawnSeen(APawn* Pawn)
 {
-	SetTargetActor(Pawn);
+	// Ignore if Target Actor is already set
+	if (!GetTargetActor())
+	{
+		SetTargetActor(Pawn);
 
-	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+		USWorldUserWidgetLit* NewWidget = CreateWidget<USWorldUserWidgetLit>(GetWorld(), SpottedWidgetClass);
+		if (NewWidget)
+		{
+			NewWidget->AttachedActor = this;
+
+			// ZOrder = 10 so the widget will spawn upfront of the healthbar (layer order)
+			NewWidget->AddToViewport(10);
+		}
+
+		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+	}
+	
+
+	
 }
 
 
@@ -108,4 +124,15 @@ void ASAiCharacter::SetTargetActor(AActor* NewTarget)
 	{
 		AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NewTarget);
 	}
+}
+
+AActor* ASAiCharacter::GetTargetActor() const
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		return Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	}
+
+	return nullptr;
 }

@@ -139,8 +139,7 @@ void ASCharacter::PrimaryInteraction()
 
 void ASCharacter::UltimateAttack()
 {
-	ActionComp->StartActionByName(this, "BlackHole");
-	
+	ActionComp->StartActionByName(this, "BlackHole");	
 }
 
 /*void ASCharacter::UltimateAttack_TimeElapsed()
@@ -217,14 +216,20 @@ FVector ASCharacter::GetPawnViewLocation() const
 	
 }*/
 
-void ASCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+void ASCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewValue, float Delta)
 {
+	if (Delta < 0.f)
+	{
+		USkeletalMeshComponent* MeshComp =GetMesh();
+		MeshComp->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->GetTimeSeconds());
+		MeshComp->SetScalarParameterValueOnMaterials(FlashTimeParamName, FlashTime);
+		
+		float RageDelta = FMath::Abs(Delta);
+		AttributeComp->ApplyRage(InstigatorActor, RageDelta);	
+	}
 	
-	USkeletalMeshComponent* MeshComp =GetMesh();
-	MeshComp->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->GetTimeSeconds());
-	MeshComp->SetScalarParameterValueOnMaterials(FlashTimeParamName, FlashTime);
 	
-	if (NewHealth <= 0.0f && Delta < 0.f)
+	if (NewValue <= 0.0f && Delta < 0.f)
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);

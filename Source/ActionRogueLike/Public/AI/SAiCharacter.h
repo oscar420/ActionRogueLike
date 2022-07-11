@@ -22,6 +22,9 @@ public:
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<USWorldUserWidgetLit> SpottedWidgetClass;
+
 	UPROPERTY(VisibleAnywhere, Category="Actions")
 	USActionComponent* ActionComp;
 
@@ -51,8 +54,12 @@ protected:
 
 	void SetTargetActor(AActor* NewTarget);
 
+	AActor* GetTargetActor() const;
+
 	void PostInitializeComponents() override;
 	
 	UFUNCTION()
 	void OnHealthChange(AActor* InstigatorActor, class USAttributeComponent* OwningComp, float NewHealth, float Delta);
 };
+
+
