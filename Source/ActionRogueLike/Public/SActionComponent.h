@@ -44,6 +44,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Actions")
 	void AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass);
+
+	UFUNCTION(BlueprintCallable, Category="Actions")
+	USAction* GetAction(TSubclassOf<USAction> ActionClass);
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

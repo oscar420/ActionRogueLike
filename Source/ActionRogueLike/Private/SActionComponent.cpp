@@ -85,6 +85,20 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 	}
 }
 
+USAction* USActionComponent::GetAction(TSubclassOf<USAction> ActionClass)
+{
+	for (USAction* Action : Actions)
+	{
+		if (Action && Action->IsA(ActionClass))
+		{
+			return Action;
+		}
+	}
+	
+
+	return nullptr;
+}
+
 void USActionComponent::RemoveAction(USAction* ActionToRemove)
 {
 	if (!ensure(ActionToRemove && !ActionToRemove->IsRunning()))
