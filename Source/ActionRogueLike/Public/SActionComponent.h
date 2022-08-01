@@ -23,13 +23,19 @@ public:
 
 protected:
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 	
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Category="Actions")
 	TArray<TSubclassOf<USAction>> DefaultActions;
+
+	UFUNCTION(Server, Reliable)
+	void ServerStartAction(AActor* Instigator, FName ActionName);
+
+	UFUNCTION(Server, Reliable)
+	void ServerStopAction(AActor* Instigator, FName ActionName);
 
 public:
 
@@ -50,5 +56,5 @@ public:
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	virtual bool ReplicateSubobjects(class UActorChannel *Channel, class FOutBunch *Bunch, FReplicationFlags *RepFlags) override;		
 };

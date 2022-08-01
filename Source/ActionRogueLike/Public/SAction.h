@@ -9,6 +9,22 @@
 class UWorld;
 class USActionComponent;
 
+USTRUCT()
+struct FActionRepData
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	AActor* Instigator;
+
+	UPROPERTY()
+	bool bIsRunning;
+	
+};
+
+
 /**
  * 
  */
@@ -19,6 +35,9 @@ class ACTIONROGUELIKE_API USAction : public UObject
 
 protected:
 
+	UPROPERTY(Replicated)
+	USActionComponent* ActionComp;
+
 	UFUNCTION(BlueprintCallable, Category="Actions")
 	USActionComponent* GetOwningComponent() const;
 
@@ -28,10 +47,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tags")
 	FGameplayTagContainer BlockedTag;
 
-	bool bIsRunning;
+	UPROPERTY(ReplicatedUsing="OnRep_RepData")
+	FActionRepData RepData;
+	//bool bIsRunning
+
+	UFUNCTION()
+	void OnRep_RepData();
 
 public:
 
+	void Initialize(USActionComponent* NewActionComp);
+	
 	UPROPERTY(EditDefaultsOnly, Category="Actions")
 	bool bAutoStart;
 
@@ -51,5 +77,9 @@ public:
 	void StopAction(AActor* Instigator);
 
 	UWorld* GetWorld() const override;
-	
+
+	virtual bool IsSupportedForNetworking() const override
+	{
+		return true;
+	};
 };

@@ -3,6 +3,7 @@
 
 #include "SAttributeComponent.h"
 #include "SGameModeBase.h"
+#include "Net/UnrealNetwork.h"
 
 static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"), 1.0f, TEXT("Global Damage Modifier for Attribute Component"));
 
@@ -13,6 +14,8 @@ USAttributeComponent::USAttributeComponent()
 	MaxHealth = 100.f;
 	Health = MaxHealth;
 	Rage = 0.f;
+	
+	SetIsReplicatedByDefault(true);
 }
 
 bool USAttributeComponent::Kill(AActor* InstigatorActor)
@@ -25,22 +28,22 @@ bool USAttributeComponent::IsAlive() const
 	return Health > 0.f;
 }
 
-bool USAttributeComponent::IsFullHealth()
+bool USAttributeComponent::IsFullHealth() const
 {
 	return Health == MaxHealth;
 }
 
-float USAttributeComponent::GetMaxHealth()
+float USAttributeComponent::GetMaxHealth() const
 {
 	return MaxHealth;
 }
 
-float USAttributeComponent::GetMaxRage()
+float USAttributeComponent::GetMaxRage() const
 {
 	return MaxRage;
 }
 
-float USAttributeComponent::GetHealth()
+float USAttributeComponent::GetHealth() const
 {
 	return Health;
 }
@@ -60,20 +63,28 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	}
 	
 	float OldHealth = Health;
+	float NewHealth = FMath::Clamp(Health + Delta, 0.f, MaxHealth);
 	
-	
-	
-	Health = FMath::Clamp(Health + Delta, 0.f, MaxHealth);
+	float ActualDelta = NewHealth - OldHealth;
 
-	float ActualDelta = Health - OldHealth;
-	OnHealthChange.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	if (GetOwner()->HasAuthority())
+	{
+		Health = NewHealth;
 
-	if (ActualDelta < 0.0f && Health == 0.f)
-	{	
-		ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-		if (GM)
+		//OnHealthChange.Broadcast(InstigatorActor, this, Health, ActualDelta);
+		if (ActualDelta != 0.0f)
 		{
-			GM->OnActorKilled(GetOwner(), InstigatorActor);
+			MulticastHealthChange(InstigatorActor, Health, ActualDelta);	
+		}
+
+		// Died
+		if (ActualDelta < 0.0f && Health == 0.f)
+		{	
+			ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+			if (GM)
+			{
+				GM->OnActorKilled(GetOwner(), InstigatorActor);
+			}
 		}
 	}
 	
@@ -120,3 +131,18 @@ float USAttributeComponent::GetRage() const
 {
 	return Rage;
 }
+
+void USAttributeComponent::MulticastHealthChange_Implementation(AActor* InstigatorActor, float NewValue, float Delta)
+{
+	OnHealthChange.Broadcast(InstigatorActor, this, NewValue, Delta);
+}
+
+void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAttributeComponent, Health);
+	DOREPLIFETIME(USAttributeComponent, MaxHealth);
+	//DOREPLIFETIME_CONDITION(USAttributeComponent, MaxHealth, COND_OwnerOnly);
+}
+

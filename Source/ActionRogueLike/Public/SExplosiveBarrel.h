@@ -21,6 +21,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere)
+	URadialForceComponent* ForceComp;
+
 	UFUNCTION()
 	void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit); 
 
@@ -29,14 +35,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void PostInitializeComponents() override;
-
-private:
-
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere)
-	URadialForceComponent* ForceComp;
-
 	
 };

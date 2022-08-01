@@ -28,8 +28,12 @@ void USAction_PrimaryPtojectile::StartAction_Implementation(AActor* Instigator)
 		FTimerHandle TimerHandle_AttackDelay;
 		FTimerDelegate Delegate;
 		Delegate.BindUFunction(this, "AttackDelay_Elapsed", Character);
+
+		if (Character->HasAuthority())
+		{
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_AttackDelay, Delegate, AttackAnimDelay,false);
+		}
 		
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle_AttackDelay, Delegate, AttackAnimDelay,false);
 	}
 	
 	
