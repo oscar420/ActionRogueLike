@@ -3,6 +3,7 @@
 
 #include "SPowerUpBase.h"
 #include "Components/SphereComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASPowerUpBase::ASPowerUpBase()
@@ -12,7 +13,9 @@ ASPowerUpBase::ASPowerUpBase()
 
 	RespawnTime = 10.f;
 
-	//SetReplicates(true);
+	bIsActive = true;
+
+	SetReplicates(true);
 }
 
 void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
@@ -27,6 +30,7 @@ void ASPowerUpBase::ShowPowerUp()
 
 void ASPowerUpBase::HideAndCooldownPowerUp()
 {
+	
 	SetPowerUpState(false);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnDelay, this, &ASPowerUpBase::ShowPowerUp, RespawnTime);
@@ -34,9 +38,22 @@ void ASPowerUpBase::HideAndCooldownPowerUp()
 
 void ASPowerUpBase::SetPowerUpState(bool bNewIsActive)
 {
-	SetActorEnableCollision(bNewIsActive);
+	bIsActive = bNewIsActive;
 
-	// Set visibility on root and all children
-	RootComponent->SetVisibility(bNewIsActive, true);
+	OnRep_IsActive();
 }
 
+void ASPowerUpBase::OnRep_IsActive()
+{
+	SetActorEnableCollision(bIsActive);
+	
+	// Set visibility on root and all children
+	RootComponent->SetVisibility(bIsActive, true);
+}
+
+void ASPowerUpBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPowerUpBase, bIsActive);
+}

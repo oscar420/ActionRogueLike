@@ -8,6 +8,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditChange, APlayerState*, Playerstate, int32, NewCredit, int32, Delta);
 
+class USSaveGame;
+
 /**
  * 
  */
@@ -18,8 +20,15 @@ class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category="Credit")
+	UPROPERTY(ReplicatedUsing="OnRep_CreditChange", EditDefaultsOnly, Category="Credit")
 	int32 Credits;
+
+	UFUNCTION()
+	void OnRep_CreditChange(int32 OldCredit);
+
+	// Downside of using multicast here is that we send over more data over the net, since it's an RPC with two parameters. OnRep_ is "free" since Credits is already getting replicated anyway.
+	//UFUNCTION(NetMulticast, Unreliable)
+	//void MulticastCredits(float NewCredits, float Delta);
 
 public:
 
@@ -32,8 +41,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Credit")
 	bool RemoveCredit(int32 Delta);
 
-	UPROPERTY(BlueprintAssignable, Category="Credit")
+	UPROPERTY(BlueprintAssignable, Category="Events")
 	FOnCreditChange OnCreditChange;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* SaveObject);
 	
 	
 	

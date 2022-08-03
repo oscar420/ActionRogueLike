@@ -28,7 +28,7 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 	UE_LOG(LogTemp, Log, TEXT("Stopped: %s"), *GetNameSafe(this));
 	//LogOnScreen(this, FString::Printf(TEXT("Stoped: %s"), *ActionName.ToString()), FColor::White);
 
-	ensureAlways(RepData.bIsRunning);
+	//ensureAlways(RepData.bIsRunning);
 
 	USActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGamePlayTags.RemoveTags(GrantTag);

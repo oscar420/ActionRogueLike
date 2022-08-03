@@ -10,6 +10,7 @@
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class ASPowerUpBase;
+class USSaveGame;
 
 
 /**
@@ -31,7 +32,21 @@ public:
 
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
+	UFUNCTION(BlueprintCallable, Category="SaveGame")
+	void WriteSaveGame();
+
+	void LoadSaveGame();
+	
+	void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
 protected:
+
+	FString SlotName;
+
+	UPROPERTY()
+	USSaveGame* CurrentSaveGame;
 
 	UPROPERTY(EditDefaultsOnly, Category="Credit")
 	TArray<TSubclassOf<AActor>> PowerUpClasess;

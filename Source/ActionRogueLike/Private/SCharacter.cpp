@@ -157,7 +157,7 @@ void ASCharacter::TeleportAttack()
 	SpawnProjectile(TeleportProjectileClass);
 }*/
 
-// overrides teh value use in GetActorEyesViewPoint function on SInteractionComponent class and sue the camara location instead of the actoreyes viewpoint
+// overrides the value use in GetActorEyesViewPoint function on SInteractionComponent class and sue the camara location instead of the actoreyes viewpoint
 FVector ASCharacter::GetPawnViewLocation() const
 {
 	return CamaraComp->GetComponentLocation();
