@@ -15,7 +15,7 @@ ASPowerUpBase::ASPowerUpBase()
 
 	bIsActive = true;
 
-	SetReplicates(true);
+	bReplicates = true;
 }
 
 void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
@@ -56,4 +56,9 @@ void ASPowerUpBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASPowerUpBase, bIsActive);
+}
+
+FText ASPowerUpBase::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
 }

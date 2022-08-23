@@ -10,7 +10,7 @@ EBTNodeResult::Type UBTTask_AISelfHeal::ExecuteTask(UBehaviorTreeComponent& Owne
 	//return Super::ExecuteTask(OwnerComp, NodeMemory);
 	
 	APawn* AIPawn = OwnerComp.GetAIOwner()->GetPawn();
-	if (ensure(AIPawn == nullptr))
+	if (AIPawn == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}

@@ -3,6 +3,7 @@
 
 #include "SPlayerState.h"
 
+//#include "SSaveGame.h"
 #include "SSaveGame.h"
 #include "Net/UnrealNetwork.h"
 
@@ -75,6 +76,8 @@ void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
-		Credits = SaveObject->Credits;
+		//Credits = SaveObject->Credits;
+		// Makes sure we trigger credits changed event
+		AddCredit(SaveObject->Credits);
 	}
 }

@@ -38,6 +38,9 @@ public:
 	
 	USActionEffect();
 
+	UFUNCTION(BlueprintCallable, Category="Actions")
+	float GetRemainingTime() const;
+
 	
 	
 	

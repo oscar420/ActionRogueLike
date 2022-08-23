@@ -9,6 +9,8 @@
 
 class USAction;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionStatedChanged, class USActionComponent*, OwningComp, USAction*, Action);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API USActionComponent : public UActorComponent
 {
@@ -23,7 +25,7 @@ public:
 
 protected:
 
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	TArray<USAction*> Actions;
 	
 	virtual void BeginPlay() override;
@@ -53,6 +55,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Actions")
 	USAction* GetAction(TSubclassOf<USAction> ActionClass);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStatedChanged OnActionStarted;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStatedChanged OnActionStopped;
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

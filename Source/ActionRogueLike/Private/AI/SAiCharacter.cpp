@@ -50,23 +50,27 @@ void ASAiCharacter::OnPawnSeen(APawn* Pawn)
 	if (!GetTargetActor())
 	{
 		SetTargetActor(Pawn);
-
-		USWorldUserWidgetLit* NewWidget = CreateWidget<USWorldUserWidgetLit>(GetWorld(), SpottedWidgetClass);
-		if (NewWidget)
-		{
-			NewWidget->AttachedActor = this;
-
-			// ZOrder = 10 so the widget will spawn upfront of the healthbar (layer order)
-			NewWidget->AddToViewport(10);
-		}
-
-		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+		
+		MulticastOnPawnSeen();
 	}
 	
 
 	
 }
 
+void ASAiCharacter::MulticastOnPawnSeen_Implementation()
+{
+	USWorldUserWidgetLit* NewWidget = CreateWidget<USWorldUserWidgetLit>(GetWorld(), SpottedWidgetClass);
+	if (NewWidget)
+	{
+		NewWidget->AttachedActor = this;
+
+		// ZOrder = 10 so the widget will spawn upfront of the healthbar (layer order)
+		NewWidget->AddToViewport(10);
+	}
+
+	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+}
 
 
 void ASAiCharacter::OnHealthChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,

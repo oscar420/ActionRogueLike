@@ -97,7 +97,7 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 
 void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
 {
-	if (ensure(!ActionClass))
+	if (!ensure(ActionClass))
 	{
 		return;
 	}
