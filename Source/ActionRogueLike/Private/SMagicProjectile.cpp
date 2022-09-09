@@ -20,6 +20,8 @@ ASMagicProjectile::ASMagicProjectile()
 	SphereComp->SetCollisionProfileName(TEXT("Projectile"));
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 
+	InitialLifeSpan = 10.f;
+
 	FlightLoopAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
 	FlightLoopAudio->SetupAttachment(SphereComp);
 }

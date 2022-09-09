@@ -27,6 +27,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	TArray<USAction*> Actions;
+
+	virtual  void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	virtual void BeginPlay() override;
 

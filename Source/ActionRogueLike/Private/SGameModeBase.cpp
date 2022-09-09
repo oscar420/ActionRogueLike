@@ -10,8 +10,11 @@
 #include "SCharacter.h"
 #include "SPlayerState.h"
 //#include "SSaveGame.h"
+#include "SActionComponent.h"
+#include "SMonsterData.h"
 #include "SSaveGame.h"
 #include "AI/SAiCharacter.h"
+#include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/SaveGame.h"
@@ -95,7 +98,7 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 		ASAiCharacter* Bot = *It;
 
 		USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(Bot);
-		if (ensure(AttributeComp && AttributeComp->IsAlive()))
+		if ((AttributeComp && AttributeComp->IsAlive()))
 		{
 			NrOfAliveBots++;
 		}
@@ -135,11 +138,54 @@ void ASGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
 	if (Locations.IsValidIndex(0))
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		if (MonsterTable)
+		{
+			TArray<FMonsterInfoRow*> Rows;
+			MonsterTable->GetAllRows("", Rows);
+
+			// Get random index.
+			int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
+			FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
+
+			UAssetManager* AssetManager = UAssetManager::GetIfValid();
+			if (AssetManager)
+			{
+				TArray<FName> Bundless;
+				FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ASGameModeBase::OnMonsterLoaded, SelectedRow->MonsterID, Locations[0]);
+				AssetManager->LoadPrimaryAsset(SelectedRow->MonsterID, Bundless, Delegate);
+			}
+		}
+		
+		
 
 		//track all used spawn locations
 		DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
 	}
+}
+
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+	UAssetManager* AssetManager = UAssetManager::GetIfValid();
+	if (AssetManager)
+	{
+		USMonsterData* MonsterData = Cast<USMonsterData>(AssetManager->GetPrimaryAssetObject(LoadedId));
+		if (MonsterData)
+		{
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator);
+			if (NewBot)
+			{
+				USActionComponent* ActionComp = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass()));
+				if (ActionComp)
+				{
+					for (TSubclassOf<USAction> ActionClass : MonsterData->Action)
+					{
+						ActionComp->AddAction(NewBot, ActionClass);
+					}
+				}
+			}
+		}
+	}
+	
 }
 
 void ASGameModeBase::RespawnPlayerElpased(AController* Controller)
@@ -247,7 +293,6 @@ void ASGameModeBase::OnSpawnPowerUpsQueryCompleted(UEnvQueryInstanceBlueprintWra
 		}
 	}
 }
-
 
 void ASGameModeBase::WriteSaveGame()
 {

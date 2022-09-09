@@ -29,6 +29,22 @@ void USActionComponent::BeginPlay()
 	
 }
 
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// Stop all
+	TArray<USAction*> ActionCopy = Actions;
+
+	for (USAction* Action : ActionCopy)
+	{
+		if (Action && Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());	
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
